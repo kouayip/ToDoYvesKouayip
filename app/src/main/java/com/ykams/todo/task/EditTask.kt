@@ -13,6 +13,6 @@ class EditTask: ActivityResultContract<Task, Task>() {
 
     override fun parseResult(resultCode: Int, result: Intent?): Task? = when {
         resultCode != Activity.RESULT_OK -> null
-        else ->result?.getSerializableExtra(TaskActivity.TASK_KEY) as? Task
+        else -> result?.getParcelableExtra(TaskActivity.TASK_KEY)
     }
 }

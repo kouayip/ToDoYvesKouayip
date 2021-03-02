@@ -3,11 +3,9 @@ package com.ykams.todo.task
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.ykams.todo.R
 import com.ykams.todo.databinding.ActivityTaskBinding
 import com.ykams.todo.tasklist.Task
-import com.ykams.todo.tasklist.TaskListAdapter
-import com.ykams.todo.tasklist.TaskListFragment
+import java.io.Serializable
 import java.util.*
 
 class TaskActivity : AppCompatActivity() {
@@ -18,7 +16,7 @@ class TaskActivity : AppCompatActivity() {
         binding = ActivityTaskBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val task = intent.getSerializableExtra(TASK_KEY) as? Task
+        val task = intent.getParcelableExtra(TASK_KEY) as? Task
 
         if(task != null){
             binding.editTextTitle.setText(task.title)

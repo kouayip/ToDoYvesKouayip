@@ -3,7 +3,7 @@ package com.ykams.todo.tasklist
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ykams.todo.databinding.FragmentTaskListBinding
 import com.ykams.todo.task.EditTask
 import com.ykams.todo.task.TaskActivity
-import java.util.*
 
 class TaskListFragment: Fragment() {
     private var _binding: FragmentTaskListBinding? = null
@@ -41,7 +40,7 @@ class TaskListFragment: Fragment() {
 
     private val openAddTaskActivityCustom  = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){result: ActivityResult ->
         if(result.resultCode == Activity.RESULT_OK) {
-            val task = result.data?.getSerializableExtra(TaskActivity.TASK_KEY) as? Task
+            val task = result.data?.getParcelableExtra(TaskActivity.TASK_KEY) as? Task
             if (task != null) {
                 taskList.add(task)
                 taskAdapter.submitList(taskList.toList())
@@ -54,6 +53,13 @@ class TaskListFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        savedInstanceState?.getParcelableArrayList<Task>(SAVE_TASK_LIST).apply {
+            this?.let {
+                taskList.clear()
+                taskList.addAll(it.toList())
+            }
+        }
+
         _binding = FragmentTaskListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -80,8 +86,17 @@ class TaskListFragment: Fragment() {
         taskAdapter.submitList(taskList.toList())
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelableArrayList(SAVE_TASK_LIST, ArrayList<Parcelable>(taskList))
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val SAVE_TASK_LIST = "SAVE_TASK_LIST"
     }
 }
