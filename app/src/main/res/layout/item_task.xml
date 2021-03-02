@@ -1,28 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
             name="task"
             type="com.ykams.todo.tasklist.Task" />
     </data>
-    <LinearLayout
-        android:orientation="vertical"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/task_title"
-            android:background="@android:color/holo_blue_bright"
-            android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp">
+        <RelativeLayout
+            android:id="@+id/container"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{task.title}"/>
+            android:padding="5dp"
+            >
 
-        <TextView
-            android:id="@+id/task_desc"
-            android:background="@android:color/holo_blue_bright"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@{task.description}"/>
+            <TextView
+                android:id="@+id/task_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{task.title}"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:scrollHorizontally="true"
+                android:textSize="24sp"
+                android:layout_alignParentTop="true"
+                android:layout_toStartOf="@id/btn_edit"
+                android:layout_alignParentStart="true"/>
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/task_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/task_title"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@id/btn_edit"
+                android:text="@{task.description}" />
+
+            <ImageButton
+                android:id="@+id/btn_edit"
+                android:background="@null"
+                android:layout_marginStart="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_edit"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:layout_toStartOf="@id/btn_delete"
+                android:contentDescription="Delete task" />
+
+            <ImageButton
+                android:id="@+id/btn_delete"
+                android:background="@null"
+                android:layout_marginStart="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_delete"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="Delete task" />
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
 </layout>

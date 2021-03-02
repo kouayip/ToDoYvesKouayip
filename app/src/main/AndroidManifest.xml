@@ -9,6 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ToDoYvesKouayip">
+        <activity
+            android:name=".task.TaskActivity"
+            android:label="@string/title_activity_task"
+            android:parentActivityName=".task.TaskActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
