@@ -1,5 +1,6 @@
 package com.ykams.todo.task
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -15,6 +16,14 @@ class TaskActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTaskBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        when (intent?.action) {
+            Intent.ACTION_SEND -> {
+                if ("text/plain" == intent.type) {
+                    handleSendText(intent) // Handle text being sent
+                }
+            }
+        }
 
         val task = intent.getParcelableExtra(TASK_KEY) as? Task
 
@@ -36,6 +45,12 @@ class TaskActivity : AppCompatActivity() {
             }else{
                 Toast.makeText(this, "Veillez renseigner un titre ", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun handleSendText(intent: Intent) {
+        intent.getStringExtra(Intent.EXTRA_TEXT)?.let { text ->
+            binding.editTextDesc.setText(text)
         }
     }
 

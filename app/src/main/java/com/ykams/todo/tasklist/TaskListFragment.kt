@@ -74,6 +74,17 @@ class TaskListFragment: Fragment() {
 
         taskAdapter.onEditTask = { task -> openEditTaskActivityCustom.launch(task) }
 
+        taskAdapter.onShareTask = { task ->
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, "Title: ${task.title}\nDescription: ${task.description}")
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }
+
         binding.fbAddTask.setOnClickListener {
             openAddTaskActivityCustom.launch(Intent(activity, TaskActivity::class.java))
         }

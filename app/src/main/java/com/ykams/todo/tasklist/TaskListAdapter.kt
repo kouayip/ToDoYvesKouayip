@@ -2,14 +2,10 @@ package com.ykams.todo.tasklist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.ykams.todo.BR
 import com.ykams.todo.R
 import com.ykams.todo.databinding.ItemTaskBinding
 
@@ -21,6 +17,7 @@ object TasksDiffCallback : DiffUtil.ItemCallback<Task>() {
 class TaskListAdapter : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(TasksDiffCallback) {
     var onDeleteTask: ((Task) -> Unit)? = null
     var onEditTask: ((Task) -> Unit)? = null
+    var onShareTask: ((Task) -> Unit)? = null
 
     inner class TaskViewHolder(private val binding: ItemTaskBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -34,6 +31,11 @@ class TaskListAdapter : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(TasksD
 
             binding.btnEdit.setOnClickListener {
                 onEditTask?.invoke(task)
+            }
+
+            binding.taskCardView.setOnLongClickListener{
+                onShareTask?.invoke(task)
+                true
             }
         }
     }
