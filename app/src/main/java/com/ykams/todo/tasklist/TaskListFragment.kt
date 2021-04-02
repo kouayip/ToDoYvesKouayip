@@ -99,7 +99,7 @@ class TaskListFragment: Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList(SAVE_TASK_LIST, ArrayList<Parcelable>(taskList))
+        outState.putParcelableArrayList(SAVE_TASK_LIST, ArrayList(taskList))
     }
 
     override fun onDestroyView() {
