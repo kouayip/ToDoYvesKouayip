@@ -10,10 +10,16 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ykams.todo.databinding.FragmentTaskListBinding
+import com.ykams.todo.network.Api
+import com.ykams.todo.network.TaskListViewModel
+import com.ykams.todo.network.TasksRepository
 import com.ykams.todo.task.EditTask
 import com.ykams.todo.task.TaskActivity
+import kotlinx.coroutines.launch
 
 class TaskListFragment: Fragment() {
     private var _binding: FragmentTaskListBinding? = null
@@ -21,6 +27,9 @@ class TaskListFragment: Fragment() {
     private var taskAdapter : TaskListAdapter = TaskListAdapter()
 
     private val binding get() = _binding!!
+
+    // On récupère une instance de ViewModel
+    private val viewModel: TaskListViewModel by viewModels()
 
     private val taskList = mutableListOf(
         Task(id = "id_1", title = "Task 1", description = "description 1"),
@@ -30,11 +39,7 @@ class TaskListFragment: Fragment() {
 
     private val openEditTaskActivityCustom = registerForActivityResult(EditTask()) { task ->
         if(task != null) {
-            val index: Int = taskList.indexOfFirst { t -> t.id == task.id }
-            if (index > 0) {
-                taskList[index] = task
-                taskAdapter.submitList(taskList.toList())
-            }
+            viewModel.editTask(task)
         }
     }
 
@@ -42,8 +47,7 @@ class TaskListFragment: Fragment() {
         if(result.resultCode == Activity.RESULT_OK) {
             val task = result.data?.getParcelableExtra(TaskActivity.TASK_KEY) as? Task
             if (task != null) {
-                taskList.add(task)
-                taskAdapter.submitList(taskList.toList())
+                viewModel.addTask(task)
             }
         }
     }
@@ -68,8 +72,7 @@ class TaskListFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         taskAdapter.onDeleteTask = { task ->
-            taskList.remove(task)
-            taskAdapter.submitList(taskList.toList())
+            viewModel.deleteTask(task)
         }
 
         taskAdapter.onEditTask = { task -> openEditTaskActivityCustom.launch(task) }
@@ -94,12 +97,26 @@ class TaskListFragment: Fragment() {
             adapter = taskAdapter
         }
 
-        taskAdapter.submitList(taskList.toList())
+        viewModel.taskList.observe(viewLifecycleOwner) { newList ->
+            taskAdapter.submitList(newList)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelableArrayList(SAVE_TASK_LIST, ArrayList(taskList))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadTasks()
+
+
+        lifecycleScope.launch {
+            val userInfo = Api.userService.getInfo().body()!!
+            binding.textView.text = "${userInfo.firstName} ${userInfo.lastName}"
+        }
+
     }
 
     override fun onDestroyView() {
