@@ -13,12 +13,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import com.ykams.todo.databinding.FragmentTaskListBinding
 import com.ykams.todo.network.Api
 import com.ykams.todo.network.TaskListViewModel
 import com.ykams.todo.network.TasksRepository
 import com.ykams.todo.task.EditTask
 import com.ykams.todo.task.TaskActivity
+import com.ykams.todo.userinfo.UserInfoActivity
 import kotlinx.coroutines.launch
 
 class TaskListFragment: Fragment() {
@@ -52,6 +54,12 @@ class TaskListFragment: Fragment() {
         }
     }
 
+    private val openUserInfoActivity  = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){result: ActivityResult ->
+        if(result.resultCode == Activity.RESULT_OK) {
+
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -70,6 +78,10 @@ class TaskListFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.imageView.setOnClickListener {
+            openUserInfoActivity.launch(Intent(activity, UserInfoActivity::class.java))
+        }
 
         taskAdapter.onDeleteTask = { task ->
             viewModel.deleteTask(task)
@@ -109,13 +121,14 @@ class TaskListFragment: Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadTasks()
-
 
         lifecycleScope.launch {
             val userInfo = Api.userService.getInfo().body()!!
             binding.textView.text = "${userInfo.firstName} ${userInfo.lastName}"
+            binding.imageView.load(userInfo.avatar)
         }
+
+        viewModel.loadTasks()
 
     }
 
